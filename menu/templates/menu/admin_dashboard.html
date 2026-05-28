@@ -1,0 +1,364 @@
+{% extends 'menu/base.html' %}
+
+{% block content %}
+
+<div class="flex justify-between items-center mb-8">
+
+    <h1 class="text-4xl font-bold">
+        Dashboard Administrador
+    </h1>
+
+    <a
+        href="{% url 'crear_orden' %}"
+        class="bg-green-600 text-white px-6 py-3 rounded-lg"
+    >
+        + Nueva Orden
+    </a>
+    <a
+        href="{% url 'lista_usuarios' %}"
+        class="bg-gray-800 text-white px-6 py-3 rounded-lg"
+    >
+        Usuarios
+    </a>
+
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+
+    <div class="bg-blue-600 text-white p-6 rounded-xl shadow">
+
+        <h2 class="text-2xl font-bold">
+            {{ pedidos_hoy }}
+        </h2>
+
+        <p class="mt-2">
+            Pedidos Hoy
+        </p>
+
+    </div>
+
+    <div class="bg-green-600 text-white p-6 rounded-xl shadow">
+
+        <h2 class="text-2xl font-bold">
+            {{ completados_hoy }}
+        </h2>
+
+        <p class="mt-2">
+            Completados
+        </p>
+
+    </div>
+
+    <div class="bg-yellow-500 text-white p-6 rounded-xl shadow">
+
+        <h2 class="text-2xl font-bold">
+            {{ pendientes }}
+        </h2>
+
+        <p class="mt-2">
+            Pendientes
+        </p>
+
+    </div>
+
+    <div class="bg-red-600 text-white p-6 rounded-xl shadow">
+
+        <h2 class="text-2xl font-bold">
+            ${{ ingresos_hoy }}
+        </h2>
+
+        <p class="mt-2">
+            Ingresos Hoy
+        </p>
+
+    </div>
+
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+    <!-- GRÁFICO ESTADOS -->
+    <div class="bg-white p-6 rounded-2xl shadow">
+
+        <h2 class="text-2xl font-bold mb-6">
+            Pedidos por Estado
+        </h2>
+
+        <canvas id="graficoEstados"></canvas>
+
+    </div>
+
+    <!-- GRÁFICO INGRESOS -->
+    <div class="bg-white p-6 rounded-2xl shadow">
+
+        <h2 class="text-2xl font-bold mb-6">
+            Producción General
+        </h2>
+
+        <canvas id="graficoProduccion"></canvas>
+
+    </div>
+
+</div>
+
+<h2 class="text-3xl font-bold mb-6">
+    Órdenes de Trabajo
+</h2>
+
+<div class="bg-white rounded-2xl shadow overflow-hidden">
+
+    <div class="p-6 border-b">
+
+        <form method="GET">
+
+            <div class="flex gap-4">
+
+                <input
+                    type="text"
+                    name="buscar"
+                    placeholder="Buscar empresa o cliente..."
+                    value="{{ request.GET.buscar }}"
+                    class="w-full rounded-lg border-gray-300 p-3"
+                >
+
+                <button
+                    type="submit"
+                    class="bg-blue-600 text-white px-6 rounded-lg"
+                >
+                    Buscar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="overflow-x-auto">
+
+        <table class="w-full">
+
+            <thead class="bg-gray-900 text-white">
+
+                <tr>
+
+                    <th class="p-4 text-left">
+                        Empresa
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Cliente
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Estado
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Tiempo
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Precio
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Prioridad
+                    </th>
+
+                    <th class="p-4 text-left">
+                        Acciones
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for orden in ordenes %}
+
+                <tr class="border-b hover:bg-gray-50">
+
+                    <td class="p-4 font-semibold">
+                        {{ orden.empresa }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ orden.cliente }}
+                    </td>
+
+                    <td class="p-4">
+
+                        {% if orden.estado == 'revision' %}
+
+                            <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm">
+                                Revisión
+                            </span>
+
+                        {% elif orden.estado == 'recepcion' %}
+
+                            <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
+                                Recepción
+                            </span>
+
+                        {% elif orden.estado == 'diseno' %}
+
+                            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm">
+                                Diseño
+                            </span>
+
+                        {% elif orden.estado == 'corte' %}
+
+                            <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm">
+                                Corte
+                            </span>
+
+                        {% elif orden.estado == 'finalizado' %}
+
+                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
+                                Finalizado
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="p-4">
+                        {{ orden.tiempo_restante }} min
+                    </td>
+
+                    <td class="p-4">
+                        ${{ orden.precio }}
+                    </td>
+
+                    <td class="p-4">
+
+                        {% if orden.prioridad == 'urgente' %}
+
+                            <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+                                Urgente
+                            </span>
+
+                        {% else %}
+
+                            <span class="bg-gray-300 px-3 py-1 rounded-full text-sm">
+                                Normal
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        <div class="flex gap-2">
+
+                            <a
+                                href="{% url 'editar_orden' orden.id %}"
+                                class="bg-yellow-500 text-white px-4 py-2 rounded-lg"
+                            >
+                                Editar
+                            </a>
+
+                            <a
+                                href="{% url 'eliminar_orden' orden.id %}"
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg"
+                            >
+                                Eliminar
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+<script>
+
+    // GRAFICO ESTADOS
+    const ctxEstados = document
+        .getElementById('graficoEstados')
+
+    new Chart(ctxEstados, {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: {{ labels_estados|safe }},
+
+            datasets: [{
+
+                label: 'Pedidos',
+
+                data: {{ data_estados|safe }},
+
+                borderWidth: 1
+
+            }]
+        },
+
+        options: {
+
+            responsive: true
+        }
+    })
+
+
+    // GRAFICO PRODUCCION
+    const ctxProduccion = document
+        .getElementById('graficoProduccion')
+
+    new Chart(ctxProduccion, {
+
+        type: 'bar',
+
+        data: {
+
+            labels: [
+
+                'Pedidos Hoy',
+                'Completados',
+                'Pendientes',
+                'Urgentes'
+
+            ],
+
+            datasets: [{
+
+                label: 'Cantidad',
+
+                data: [
+
+                    {{ pedidos_hoy }},
+                    {{ completados_hoy }},
+                    {{ pendientes }},
+                    {{ urgentes }}
+
+                ],
+
+                borderWidth: 1
+
+            }]
+        },
+
+        options: {
+
+            responsive: true
+        }
+    })
+
+</script>

@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Imprenta</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Flowbite -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.css"
+        rel="stylesheet"
+    />
+
+</head>
+
+<body class="bg-gray-100">
+
+    {% if request.path != '/cliente/' %}
+
+    <div class="flex min-h-screen">
+
+        <!-- Sidebar -->
+        <aside class="w-72 bg-gray-900 text-white p-6">
+
+            <h1 class="text-3xl font-bold mb-10">
+                Imprenta
+            </h1>
+
+            <nav class="space-y-4">
+
+                <a
+                    href="{% url 'dashboard_admin' %}"
+                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
+                >
+                    Dashboard
+                </a>
+
+                <a
+                    href="{% url 'crear_orden' %}"
+                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
+                >
+                    Nueva Orden
+                </a>
+
+                <a
+                    href="{% url 'lista_usuarios' %}"
+                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
+                >
+                    Usuarios
+                </a>
+
+                <a
+                    href="{% url 'dashboard_trabajador' %}"
+                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
+                >
+                    Trabajador
+                </a>
+
+                <a
+                    href="{% url 'dashboard_cliente' %}"
+                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
+                >
+                    Pantalla Cliente
+                </a>
+                {% if request.user.groups.all %}
+
+                    {% for grupo in request.user.groups.all %}
+
+                        {% if grupo.name == 'Administrador' or grupo.name == 'Trabajador' %}
+
+                            <a
+                                href="{% url 'kanban' %}"
+                                class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
+                            >
+                                Kanban Producción
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% endif %}
+            </nav>
+
+            <div class="mt-10">
+
+                {% if user.is_authenticated %}
+
+                <p class="mb-4 text-gray-300">
+                    {{ user.username }}
+                </p>
+
+                <form
+                    method="POST"
+                    action="{% url 'logout' %}"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="w-full bg-red-600 hover:bg-red-700 p-3 rounded-lg"
+                    >
+                        Cerrar Sesión
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+            </div>
+
+        </aside>
+
+        <!-- Contenido -->
+        <main class="flex-1 p-10">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+    {% else %}
+
+        {% block cliente_content %}
+        {% endblock %}
+
+    {% endif %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</body>
+
+</html>

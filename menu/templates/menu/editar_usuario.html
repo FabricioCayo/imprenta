@@ -1,0 +1,89 @@
+{% extends 'menu/base.html' %}
+
+{% block content %}
+
+<div class="bg-white p-8 rounded-xl shadow max-w-2xl mx-auto">
+
+    <h1 class="text-4xl font-bold mb-6">
+        Editar Usuario
+    </h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="space-y-4">
+
+            <div>
+
+                <label class="block mb-2">
+                    Usuario
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ usuario.username }}"
+                    class="w-full border p-3 rounded"
+                >
+
+            </div>
+
+            <div>
+
+                <label class="block mb-2">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ usuario.email }}"
+                    class="w-full border p-3 rounded"
+                >
+
+            </div>
+
+            <div>
+
+                <label class="block mb-2">
+                    Rol
+                </label>
+
+                <select
+                    name="grupo"
+                    class="w-full border p-3 rounded"
+                >
+
+                    {% for grupo in grupos %}
+
+                        <option
+                            value="{{ grupo.id }}"
+
+                            {% if grupo in usuario.groups.all %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ grupo.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <button
+            type="submit"
+            class="bg-blue-600 text-white px-6 py-3 rounded mt-6"
+        >
+            Actualizar
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'menu/base.html' %}
+
+{% block content %}
+
+<div class="flex justify-between items-center mb-8">
+
+    <h1 class="text-4xl font-bold">
+        Usuarios
+    </h1>
+
+    <a
+        href="{% url 'crear_usuario' %}"
+        class="bg-green-600 text-white px-6 py-3 rounded"
+    >
+        Nuevo Usuario
+    </a>
+
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+
+    <table class="w-full">
+
+        <thead class="bg-gray-800 text-white">
+
+            <tr>
+
+                <th class="p-4 text-left">
+                    Usuario
+                </th>
+
+                <th class="p-4 text-left">
+                    Email
+                </th>
+
+                <th class="p-4 text-left">
+                    Rol
+                </th>
+
+                <th class="p-4 text-left">
+                    Acciones
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for usuario in usuarios %}
+
+                <tr class="border-b">
+
+                    <td class="p-4">
+                        {{ usuario.username }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ usuario.email }}
+                    </td>
+
+                    <td class="p-4">
+
+                        {% for grupo in usuario.groups.all %}
+                            {{ grupo.name }}
+                        {% endfor %}
+
+                    </td>
+
+                    <td class="p-4 flex gap-2">
+
+                        <a
+                            href="{% url 'editar_usuario' usuario.id %}"
+                            class="bg-yellow-500 text-white px-4 py-2 rounded"
+                        >
+                            Editar
+                        </a>
+
+                        <a
+                            href="{% url 'eliminar_usuario' usuario.id %}"
+                            class="bg-red-600 text-white px-4 py-2 rounded"
+                        >
+                            Eliminar
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

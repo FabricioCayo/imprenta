@@ -1,0 +1,240 @@
+{% extends 'menu/base.html' %}
+
+{% block content %}
+
+<h1 class="text-4xl font-bold mb-8">
+    Producción Kanban
+</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+
+    <!-- REVISIÓN -->
+    <div class="bg-gray-100 rounded-2xl p-4">
+
+        <h2 class="text-xl font-bold mb-4 text-gray-700">
+            Revisión
+        </h2>
+
+        <div class="space-y-4">
+
+            {% for orden in revision %}
+
+                <div class="bg-white p-4 rounded-xl shadow">
+
+                    <h3 class="font-bold text-lg">
+                        {{ orden.empresa }}
+                    </h3>
+
+                    <p class="text-sm text-gray-600">
+                        {{ orden.cliente }}
+                    </p>
+
+                    <p class="mt-2 text-sm">
+                        {{ orden.descripcion|truncatechars:60 }}
+                    </p>
+
+                    <p class="mt-2 font-semibold">
+                        {{ orden.tiempo_restante }} min
+                    </p>
+
+                    <a
+                        href="{% url 'cambiar_estado' orden.id %}"
+                        class="mt-4 block text-center bg-blue-600 text-white py-2 rounded-lg"
+                    >
+                        Avanzar
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-gray-500">
+                    Sin órdenes
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- RECEPCIÓN -->
+    <div class="bg-blue-100 rounded-2xl p-4">
+
+        <h2 class="text-xl font-bold mb-4 text-blue-700">
+            Recepción
+        </h2>
+
+        <div class="space-y-4">
+
+            {% for orden in recepcion %}
+
+                <div class="bg-white p-4 rounded-xl shadow">
+
+                    <h3 class="font-bold text-lg">
+                        {{ orden.empresa }}
+                    </h3>
+
+                    <p class="text-sm text-gray-600">
+                        {{ orden.cliente }}
+                    </p>
+
+                    <p class="mt-2 font-semibold">
+                        {{ orden.tiempo_restante }} min
+                    </p>
+
+                    <a
+                        href="{% url 'cambiar_estado' orden.id %}"
+                        class="mt-4 block text-center bg-blue-600 text-white py-2 rounded-lg"
+                    >
+                        Avanzar
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-gray-500">
+                    Sin órdenes
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- DISEÑO -->
+    <div class="bg-yellow-100 rounded-2xl p-4">
+
+        <h2 class="text-xl font-bold mb-4 text-yellow-700">
+            Diseño
+        </h2>
+
+        <div class="space-y-4">
+
+            {% for orden in diseno %}
+
+                <div class="bg-white p-4 rounded-xl shadow">
+
+                    <h3 class="font-bold text-lg">
+                        {{ orden.empresa }}
+                    </h3>
+
+                    <p class="text-sm text-gray-600">
+                        {{ orden.cliente }}
+                    </p>
+
+                    <p class="mt-2 font-semibold">
+                        {{ orden.tiempo_restante }} min
+                    </p>
+
+                    <a
+                        href="{% url 'cambiar_estado' orden.id %}"
+                        class="mt-4 block text-center bg-blue-600 text-white py-2 rounded-lg"
+                    >
+                        Avanzar
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-gray-500">
+                    Sin órdenes
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- CORTE -->
+    <div class="bg-orange-100 rounded-2xl p-4">
+
+        <h2 class="text-xl font-bold mb-4 text-orange-700">
+            Corte
+        </h2>
+
+        <div class="space-y-4">
+
+            {% for orden in corte %}
+
+                <div class="bg-white p-4 rounded-xl shadow">
+
+                    <h3 class="font-bold text-lg">
+                        {{ orden.empresa }}
+                    </h3>
+
+                    <p class="text-sm text-gray-600">
+                        {{ orden.cliente }}
+                    </p>
+
+                    <p class="mt-2 font-semibold">
+                        {{ orden.tiempo_restante }} min
+                    </p>
+
+                    <a
+                        href="{% url 'cambiar_estado' orden.id %}"
+                        class="mt-4 block text-center bg-blue-600 text-white py-2 rounded-lg"
+                    >
+                        Avanzar
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-gray-500">
+                    Sin órdenes
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- FINALIZADO -->
+    <div class="bg-green-100 rounded-2xl p-4">
+
+        <h2 class="text-xl font-bold mb-4 text-green-700">
+            Finalizado
+        </h2>
+
+        <div class="space-y-4">
+
+            {% for orden in finalizado %}
+
+                <div class="bg-white p-4 rounded-xl shadow">
+
+                    <h3 class="font-bold text-lg">
+                        {{ orden.empresa }}
+                    </h3>
+
+                    <p class="text-sm text-gray-600">
+                        {{ orden.cliente }}
+                    </p>
+
+                    <p class="mt-2 font-semibold">
+                        Completado
+                    </p>
+
+                </div>
+
+            {% empty %}
+
+                <p class="text-gray-500">
+                    Sin órdenes
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

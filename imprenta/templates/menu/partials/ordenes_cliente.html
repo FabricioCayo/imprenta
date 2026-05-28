@@ -1,0 +1,52 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+    {% for orden in ordenes %}
+
+        <div
+            class="orden-card rounded-3xl p-8 shadow-2xl transition-all duration-500 
+            
+            {% if orden.estado == 'revision' %}
+                bg-gray-600
+
+            {% elif orden.estado == 'recepcion' %}
+                bg-blue-600
+
+            {% elif orden.estado == 'diseno' %}
+                bg-yellow-500
+
+            {% elif orden.estado == 'corte' %}
+                bg-orange-500
+
+            {% elif orden.estado == 'finalizado' %}
+                bg-green-600
+
+            {% endif %}
+            "
+            data-estado="{{ orden.estado }}"
+            data-inicio="{{ orden.fecha_inicio|date:'c' }}"
+            data-tiempo="{{ orden.tiempo_estimado }}"
+        >
+
+            <h2 class="text-4xl font-bold mb-4">
+                {{ orden.empresa }}
+            </h2>
+
+            <p class="text-2xl estado-texto">
+                {{ orden.get_estado_display }}
+            </p>
+
+            <p class="text-xl mt-4">
+                Cliente:
+                {{ orden.cliente }}
+            </p>
+
+            <div
+                class="contador text-5xl font-bold mt-8"
+            >
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>

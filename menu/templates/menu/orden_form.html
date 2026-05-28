@@ -1,0 +1,116 @@
+{% extends 'menu/base.html' %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+    <div class="bg-white rounded-2xl shadow-lg p-10">
+
+        <h1 class="text-4xl font-bold mb-10">
+            Orden de Trabajo
+        </h1>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Empresa
+                    </label>
+
+                    {{ form.empresa|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Cliente
+                    </label>
+
+                    {{ form.cliente|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Teléfono
+                    </label>
+
+                    {{ form.telefono|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Estado
+                    </label>
+
+                    {{ form.estado|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Prioridad
+                    </label>
+
+                    {{ form.prioridad|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Precio
+                    </label>
+
+                    {{ form.precio|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Adelanto
+                    </label>
+
+                    {{ form.adelanto|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-semibold">
+                        Tiempo Estimado (min)
+                    </label>
+
+                    {{ form.tiempo_estimado|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block mb-2 font-semibold">
+                        Descripción
+                    </label>
+
+                    {{ form.descripcion|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block mb-2 font-semibold">
+                        Observaciones
+                    </label>
+
+                    {{ form.observaciones|add_class:"w-full rounded-lg border-gray-300 p-3" }}
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl"
+            >
+                Guardar Orden
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="min-h-screen bg-black flex items-center justify-center">
+
+    <div class="bg-gray-900 p-10 rounded-3xl shadow-2xl w-full max-w-md border border-gray-700">
+
+        <h1 class="text-5xl text-white font-bold text-center mb-10">
+            IMPRENTA
+        </h1>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="mb-6">
+
+                <label class="text-white block mb-2">
+                    Usuario
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    class="w-full p-4 rounded-xl bg-gray-800 text-white border border-gray-600"
+                >
+
+            </div>
+
+            <div class="mb-8">
+
+                <label class="text-white block mb-2">
+                    Contraseña
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    class="w-full p-4 rounded-xl bg-gray-800 text-white border border-gray-600"
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl"
+            >
+
+                Ingresar
+
+            </button>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

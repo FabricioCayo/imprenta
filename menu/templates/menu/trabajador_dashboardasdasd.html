@@ -1,0 +1,30 @@
+<h2>Panel de Taller (Operarios)</h2>
+<table>
+    <tr>
+        <th>Orden</th>
+        <th>Empresa</th>
+        <th>Estado Actual</th>
+        <th>Acción (Siguiente Paso)</th>
+    </tr>
+    {% for orden in ordenes %}
+    <tr>
+        <td>#{{ orden.id }}</td>
+        <td>{{ orden.nombre_empresa }}</td>
+        <td>{{ orden.get_estado_display }}</td>
+        <td>
+            <form action="{% url 'cambiar_estado' orden.id %}" method="POST">
+                {% csrf_token %}
+                {% if orden.estado == 'REVISION' %}
+                    <button type="submit" name="nuevo_estado" value="RECEPCION" style="background-color: #17a2b8; color: white;">Empezar Recepción</button>
+                {% elif orden.estado == 'RECEPCION' %}
+                    <button type="submit" name="nuevo_estado" value="DISENO" style="background-color: #ffc107;">Pasar a Diseño</button>
+                {% elif orden.estado == 'DISENO' %}
+                    <button type="submit" name="nuevo_estado" value="CORTE" style="background-color: #fd7e14; color: white;">Enviar a Corte</button>
+                {% elif orden.estado == 'CORTE' %}
+                    <button type="submit" name="nuevo_estado" value="FINALIZADO" style="background-color: #28a745; color: white;">Finalizar Pedido ✓</button>
+                {% endif %}
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

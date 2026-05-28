@@ -1,0 +1,255 @@
+{% extends 'menu/base.html' %}
+
+{% load static %}
+
+{% block cliente_content %}
+
+<body class="bg-black text-white overflow-hidden">
+
+    <audio id="alarma">
+
+        <source
+            src="{% static 'menu/audio/alerta.mp3' %}"
+            type="audio/mpeg"
+        >
+
+    </audio>
+
+    <div class="p-10">
+
+        <div class="flex justify-between items-center mb-10">
+
+            <h1 class="text-6xl font-bold">
+                MENÚ DE IMPRENTA
+            </h1>
+
+            <div
+                id="reloj"
+                class="text-4xl font-bold"
+            >
+            </div>
+
+        </div>
+
+        <div
+
+            id="contenedor-ordenes"
+
+            hx-get="{% url 'actualizar_cliente' %}"
+
+            hx-trigger="every 5s"
+
+            hx-swap="innerHTML"
+        >
+
+            {% include 'menu/partials/ordenes_cliente.html' %}
+
+        </div>
+
+    </div>
+
+    <!-- Logout oculto -->
+    <form
+        method="POST"
+        action="{% url 'logout' %}"
+        class="fixed bottom-2 right-2 opacity-5 hover:opacity-100"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="bg-red-600 text-white px-4 py-2 rounded-full"
+        >
+            Salir
+        </button>
+
+    </form>
+
+    <script>
+
+        // RELOJ
+        function actualizarReloj() {
+
+            const ahora = new Date()
+
+            document.getElementById('reloj').innerHTML =
+                ahora.toLocaleTimeString()
+        }
+
+        setInterval(actualizarReloj, 1000)
+
+        actualizarReloj()
+
+
+        // CONTADORES
+
+        // RELOJ
+        function actualizarReloj() {
+
+            const ahora = new Date()
+
+            document.getElementById('reloj').innerHTML =
+                ahora.toLocaleTimeString()
+        }
+
+        setInterval(actualizarReloj, 1000)
+
+        actualizarReloj()
+
+
+        // CONTADORES EN TIEMPO REAL
+        const tarjetas =
+            document.querySelectorAll('.orden-card')
+
+        const alarma =
+            document.getElementById('alarma')
+
+        function actualizarContadores() {
+
+            tarjetas.forEach(card => {
+
+                const inicio =
+                    card.dataset.inicio
+
+                const estado =
+                    card.dataset.estado
+                    
+                const tiempoEstimado =
+                    parseInt(card.dataset.tiempo)
+
+                const contador =
+                    card.querySelector('.contador')
+
+                if (!inicio) {
+
+                    if (estado == 'finalizado') {
+
+                        contador.innerHTML =
+                            'FINALIZADO'
+
+                        return
+                    }
+
+                    contador.innerHTML =
+                        'Pendiente'
+
+                    return
+                }
+
+                const fechaInicio =
+                    new Date(inicio)
+
+                const ahora =
+                    new Date()
+
+                const transcurrido =
+                    Math.floor(
+                        (ahora - fechaInicio)
+                        / 1000 / 60
+                    )
+
+                const restante =
+                    tiempoEstimado - transcurrido
+
+
+                // MOSTRAR TIEMPO
+                if (estado == 'finalizado') {
+
+                    contador.innerHTML =
+                        'FINALIZADO'
+
+                } else if (restante > 0) {
+
+                    contador.innerHTML =
+                        restante + ' min'
+
+                } else {
+
+                    contador.innerHTML =
+                        'ATRASADO'
+                }
+
+                // 30 MIN
+                if (
+                    restante <= 30
+                    && restante > 10
+                ) {
+
+                    card.classList.add(
+                        'animate-pulse'
+                    )
+                }
+
+                // 10 MIN
+                if (
+
+                    estado !== 'finalizado'
+                    && estado !== 'entregado'
+
+                    && restante <= 10
+                    && restante > 0
+                ) {
+
+                    card.classList.remove(
+                        'bg-blue-600',
+                        'bg-yellow-500',
+                        'bg-orange-500'
+                    )
+
+                    card.classList.add(
+                        'bg-red-600',
+                        'animate-bounce'
+                    )
+
+                    alarma.play()
+                }
+
+                // VENCIDO
+                if (
+
+                    estado !== 'finalizado'
+                    && estado !== 'entregado'
+
+                    && restante <= 0
+                ) {
+
+                    card.classList.remove(
+                        'bg-blue-600',
+                        'bg-yellow-500',
+                        'bg-orange-500'
+                    )
+
+                    card.classList.add(
+                        'bg-red-900',
+                        'animate-pulse'
+                    )
+
+                    alarma.play()
+                }
+
+            })
+
+        }
+
+        actualizarContadores()
+
+        setInterval(
+            actualizarContadores,
+            1000
+        )
+
+      
+
+        // AUTO REFRESH
+        setInterval(() => {
+
+            location.reload()
+
+        }, 300000)
+
+    </script>
+
+</body>
+
+{% endblock %}
