@@ -2,9 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-
+# =====================================
+# MODELO PRINCIPAL DE ÓRDENES DE TRABAJO
+# =====================================
 class OrdenTrabajo(models.Model):
 
+    # Estados del flujo de producción
     ESTADOS = [
         ('revision', 'Revisión'),
         ('recepcion', 'Recepción'),
@@ -14,16 +17,15 @@ class OrdenTrabajo(models.Model):
         ('entregado', 'Entregado'),
     ]
 
+    # Prioridad de la orden
     PRIORIDADES = [
         ('normal', 'Normal'),
         ('urgente', 'Urgente'),
     ]
-    archivado = models.BooleanField(
-        default=False
-    )
+
+    # Información del cliente
     empresa = models.CharField(max_length=200)
     cliente = models.CharField(max_length=200)
-
     telefono = models.CharField(max_length=20, blank=True, null=True)
 
     descripcion = models.TextField()
@@ -39,7 +41,7 @@ class OrdenTrabajo(models.Model):
         choices=PRIORIDADES,
         default='normal'
     )
-
+    # Información económica
     precio = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -52,6 +54,7 @@ class OrdenTrabajo(models.Model):
         default=0
     )
 
+    # Fechas de seguimiento
     tiempo_estimado = models.IntegerField(
         help_text="Tiempo en minutos"
     )
@@ -67,7 +70,8 @@ class OrdenTrabajo(models.Model):
         blank=True,
         null=True
     )
-
+    
+    # Responsable de la orden
     trabajador = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

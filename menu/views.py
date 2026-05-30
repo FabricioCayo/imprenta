@@ -10,14 +10,12 @@ from .forms import OrdenTrabajoForm
 from .models import HistorialEstado
 
 from .decorators import solo_admin, solo_trabajador
-from django.shortcuts import redirect
 
 from django.db.models import Sum
 from django.utils.timezone import now
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from .forms import UsuarioForm
-
 
 from .decorators import (
     solo_admin,
@@ -53,9 +51,7 @@ def redireccion_dashboard(request):
 def dashboard_admin(request):
 
     ordenes = OrdenTrabajo.objects.all()
-    ordenes = OrdenTrabajo.objects.filter(
-        archivado=False
-    )
+
     buscar = request.GET.get('buscar')
 
     if buscar:
@@ -142,9 +138,7 @@ def dashboard_admin(request):
 @solo_trabajador
 def dashboard_trabajador(request):
 
-    ordenes = OrdenTrabajo.objects.filter(
-        archivado=False
-    )
+    ordenes = OrdenTrabajo.objects.all()
 
     context = {
         'ordenes': ordenes
@@ -159,10 +153,9 @@ def dashboard_trabajador(request):
 
 def dashboard_cliente(request):
 
-    ordenes = OrdenTrabajo.objects.filter(
-        archivado=False
+    ordenes = OrdenTrabajo.objects.exclude(
+        estado='entregado'
     )
-
     context = {
         'ordenes': ordenes
     }
@@ -342,11 +335,7 @@ def cambiar_estado(request, id):
         if nuevo_estado == 'finalizado':
 
             orden.fecha_finalizacion = timezone.now()
-        
-        if nuevo_estado == 'entregado':
 
-            orden.archivado = True
-            
         orden.save()
 
         # HISTORIAL
@@ -498,7 +487,10 @@ def kanban(request):
         estado='corte'
     )
 
-    finalizado = OrdenTrabajo.objects.none()
+    finalizado = OrdenTrabajo.objects.filter(
+        estado='finalizado'
+    )
+    
 
     context = {
 

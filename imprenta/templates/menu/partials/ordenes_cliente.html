@@ -1,9 +1,10 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="flex flex-wrap gap-8">
 
     {% for orden in ordenes %}
 
         <div
-            class="orden-card rounded-3xl p-8 shadow-2xl transition-all duration-500 
+        
+            class="orden-card rounded-3xl p-8 min-w-[250px]
             
             {% if orden.estado == 'revision' %}
                 bg-gray-600
@@ -22,7 +23,7 @@
 
             {% endif %}
             "
-            data-estado="{{ orden.estado }}"
+
             data-inicio="{{ orden.fecha_inicio|date:'c' }}"
             data-tiempo="{{ orden.tiempo_estimado }}"
         >
@@ -40,9 +41,7 @@
                 {{ orden.cliente }}
             </p>
 
-            <div
-                class="contador text-5xl font-bold mt-8"
-            >
+            <div class="contador text-3xl font-bold mt-8 text-center break-words">
             </div>
 
         </div>

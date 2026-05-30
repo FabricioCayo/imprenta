@@ -1,6 +1,9 @@
 from django.shortcuts import redirect
 
 
+# =====================================
+# SOLO ADMINISTRADORES
+# =====================================
 def solo_admin(view_func):
 
     def wrapper(request, *args, **kwargs):
@@ -20,13 +23,26 @@ def solo_admin(view_func):
     return wrapper
 
 
+# =====================================
+# TRABAJADORES Y ADMINISTRADORES
+# =====================================
 def solo_trabajador(view_func):
 
     def wrapper(request, *args, **kwargs):
 
-        if request.user.groups.filter(
-            name='Trabajador'
-        ).exists():
+        if (
+
+            request.user.groups.filter(
+                name='Trabajador'
+            ).exists()
+
+            or
+
+            request.user.groups.filter(
+                name='Administrador'
+            ).exists()
+
+        ):
 
             return view_func(
                 request,
@@ -39,11 +55,15 @@ def solo_trabajador(view_func):
     return wrapper
 
 
+# =====================================
+# KANBAN Y PRODUCCIÓN
+# =====================================
 def admin_o_trabajador(view_func):
 
     def wrapper(request, *args, **kwargs):
 
         if (
+
             request.user.groups.filter(
                 name='Administrador'
             ).exists()
@@ -53,6 +73,7 @@ def admin_o_trabajador(view_func):
             request.user.groups.filter(
                 name='Trabajador'
             ).exists()
+
         ):
 
             return view_func(

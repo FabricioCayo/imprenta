@@ -36,50 +36,40 @@
 
             <nav class="space-y-4">
 
-                <a
-                    href="{% url 'dashboard_admin' %}"
-                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
-                >
-                    Dashboard
-                </a>
-
-                <a
-                    href="{% url 'crear_orden' %}"
-                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
-                >
-                    Nueva Orden
-                </a>
-
-                <a
-                    href="{% url 'lista_usuarios' %}"
-                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
-                >
-                    Usuarios
-                </a>
-
-                <a
-                    href="{% url 'dashboard_trabajador' %}"
-                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
-                >
-                    Trabajador
-                </a>
-
-                <a
-                    href="{% url 'dashboard_cliente' %}"
-                    class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
-                >
-                    Pantalla Cliente
-                </a>
+                <!-- ADMINISTRADOR -->
                 {% if request.user.groups.all %}
 
                     {% for grupo in request.user.groups.all %}
 
-                        {% if grupo.name == 'Administrador' or grupo.name == 'Trabajador' %}
+                        {% if grupo.name == 'Administrador' %}
 
-                            <a
-                                href="{% url 'kanban' %}"
-                                class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg"
-                            >
+                            <a href="{% url 'dashboard_admin' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Dashboard
+                            </a>
+
+                            <a href="{% url 'crear_orden' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Nueva Orden
+                            </a>
+
+                            <a href="{% url 'lista_usuarios' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Usuarios
+                            </a>
+
+                            <a href="{% url 'dashboard_trabajador' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Trabajador
+                            </a>
+
+                            <a href="{% url 'dashboard_cliente' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Pantalla Cliente
+                            </a>
+
+                            <a href="{% url 'kanban' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
                                 Kanban Producción
                             </a>
 
@@ -88,6 +78,50 @@
                     {% endfor %}
 
                 {% endif %}
+
+
+                <!-- TRABAJADOR -->
+                {% if request.user.groups.all %}
+
+                    {% for grupo in request.user.groups.all %}
+
+                        {% if grupo.name == 'Trabajador' %}
+
+                            <a href="{% url 'dashboard_trabajador' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Trabajador
+                            </a>
+
+                            <a href="{% url 'kanban' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Kanban Producción
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% endif %}
+
+
+                <!-- CLIENTE -->
+                {% if request.user.groups.all %}
+
+                    {% for grupo in request.user.groups.all %}
+
+                        {% if grupo.name == 'Cliente' %}
+
+                            <a href="{% url 'dashboard_cliente' %}"
+                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                                Pantalla Cliente
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% endif %}
+
             </nav>
 
             <div class="mt-10">

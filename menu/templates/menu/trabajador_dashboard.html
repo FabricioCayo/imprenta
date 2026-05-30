@@ -2,27 +2,45 @@
 
 {% block content %}
 
+<!-- ===================================== -->
+<!-- PANEL DEL TRABAJADOR -->
+<!-- ===================================== -->
+
 <h1 class="text-4xl font-bold mb-6">
     Panel Trabajador
 </h1>
+
+<!-- ===================================== -->
+<!-- LISTADO DE ÓRDENES -->
+<!-- ===================================== -->
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
     {% for orden in ordenes %}
 
-        <div class="bg-white p-6 rounded shadow">
+        <div class="bg-white p-6 rounded-xl shadow">
 
             <h2 class="text-2xl font-bold">
                 {{ orden.empresa }}
             </h2>
 
+            <p class="mt-2 text-gray-600">
+                Cliente: {{ orden.cliente }}
+            </p>
+
             <p class="mt-2">
-                {{ orden.get_estado_display }}
+                Estado:
+                <strong>{{ orden.get_estado_display }}</strong>
             </p>
 
             <p>
                 Tiempo restante:
-                {{ orden.tiempo_restante }} min
+                <strong>{{ orden.tiempo_restante }} min</strong>
+            </p>
+
+            <p class="mt-2">
+                Prioridad:
+                <strong>{{ orden.get_prioridad_display }}</strong>
             </p>
 
             <a
@@ -31,6 +49,14 @@
             >
                 Avanzar Estado
             </a>
+
+        </div>
+
+    {% empty %}
+
+        <div class="col-span-full bg-white p-6 rounded-xl shadow text-center text-gray-500">
+
+            No existen órdenes asignadas.
 
         </div>
 
