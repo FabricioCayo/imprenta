@@ -4,9 +4,9 @@
 
 {% block cliente_content %}
 
-<body class="bg-black text-white overflow-hidden">
+<body class="bg-black text-white min-h-screen flex flex-col overflow-x-hidden">
 
-    <audio id="alarma">
+    <audio id="alarma" preload="auto">
 
         <source
             src="{% static 'menu/audio/alerta.mp3' %}"
@@ -15,30 +15,77 @@
 
     </audio>
 
-    <div class="p-10">
+    <div
+        id="activar-sonido"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer"
+    >
+        <p class="text-3xl font-bold text-center px-8">
+            Tocar pantalla para activar alarmas de sonido
+        </p>
+    </div>
 
-        <div class="flex justify-between items-center mb-10">
+    <div
+        id="reloj"
+        class="fixed top-6 right-8 z-40 text-3xl md:text-4xl font-bold tabular-nums bg-black/60 px-5 py-3 rounded-2xl border border-gray-700"
+    >
+    </div>
 
-            <h1 class="text-6xl font-bold">
+    <main class="flex-1 flex flex-col px-6 md:px-12 lg:px-20 py-10 pb-32">
+
+        <header class="text-center mb-12 md:mb-16 pt-2">
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide">
                 MENÚ DE IMPRENTA
             </h1>
+        </header>
 
-            <div
-                id="reloj"
-                class="text-4xl font-bold"
-            >
-            </div>
-
-        </div>
-
-       
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div
+            id="ordenes-container"
+            class="flex-1 w-full"
+        >
 
             {% include 'menu/partials/ordenes_cliente.html' %}
 
         </div>
 
-    </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 z-30 bg-sky-700 border-t border-sky-500 px-6 md:px-12 py-4 shadow-lg">
+
+        <div class="flex flex-wrap justify-center items-center gap-5 md:gap-10 max-w-6xl mx-auto text-sky-50 font-medium">
+
+            <div class="flex items-center gap-2">
+                <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-600 shrink-0 ring-2 ring-sky-200/40"></span>
+                <span class="text-sm md:text-base">Gris · Revisión</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-600 shrink-0 ring-2 ring-sky-200/40"></span>
+                <span class="text-sm md:text-base">Azul · Recepción</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-yellow-500 shrink-0 ring-2 ring-sky-200/40"></span>
+                <span class="text-sm md:text-base">Amarillo · Diseño</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-orange-500 shrink-0 ring-2 ring-sky-200/40"></span>
+                <span class="text-sm md:text-base">Naranja · Corte</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-600 shrink-0 ring-2 ring-sky-200/40"></span>
+                <span class="text-sm md:text-base">Verde · Listo</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-red-600 shrink-0 ring-2 ring-sky-200/40"></span>
+                <span class="text-sm md:text-base">Rojo · Atrasado</span>
+            </div>
+
+        </div>
+
+    </footer>
 
     <!-- Logout oculto -->
     <form
@@ -60,154 +107,285 @@
 
 <script>
 
-    // RELOJ
+    const COLORES_ESTADO = {
+        revision: 'bg-gray-600',
+        recepcion: 'bg-blue-600',
+        diseno: 'bg-yellow-500',
+        corte: 'bg-orange-500',
+        finalizado: 'bg-green-600',
+    }
+
+    const COLORES_ALERTA = [
+        'bg-red-600',
+        'bg-red-900',
+    ]
+
+    const alarma = document.getElementById('alarma')
+    const alertasPorOrden = new Map()
+    let audioContext = null
+    let audioDesbloqueado = false
+
+    function desbloquearAudio() {
+        if (audioDesbloqueado) return
+
+        audioDesbloqueado = true
+
+        const overlay = document.getElementById('activar-sonido')
+        if (overlay) {
+            overlay.remove()
+        }
+
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)()
+            audioContext.resume()
+        } catch (error) {
+            console.error('No se pudo iniciar el audio:', error)
+        }
+
+        if (alarma) {
+            alarma.play()
+                .then(() => {
+                    alarma.pause()
+                    alarma.currentTime = 0
+                })
+                .catch(() => {})
+        }
+    }
+
+    document.getElementById('activar-sonido')
+        .addEventListener('click', desbloquearAudio)
+
+    function obtenerRegistroAlertas(id) {
+        if (!alertasPorOrden.has(id)) {
+            alertasPorOrden.set(id, {
+                min30: 0,
+                min10: 0,
+                vencido: 0,
+            })
+        }
+
+        return alertasPorOrden.get(id)
+    }
+
+    function reproducirTono(frecuencia, duracionMs) {
+        if (!audioDesbloqueado) return
+
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)()
+            }
+
+            if (audioContext.state === 'suspended') {
+                audioContext.resume()
+            }
+
+            const oscilador = audioContext.createOscillator()
+            const ganancia = audioContext.createGain()
+
+            oscilador.type = 'square'
+            oscilador.frequency.value = frecuencia
+            ganancia.gain.value = 0.25
+
+            oscilador.connect(ganancia)
+            ganancia.connect(audioContext.destination)
+
+            const ahora = audioContext.currentTime
+            oscilador.start(ahora)
+            oscilador.stop(ahora + duracionMs / 1000)
+        } catch (error) {
+            console.error('Error al reproducir tono:', error)
+        }
+
+        if (alarma && alarma.readyState >= 2) {
+            alarma.currentTime = 0
+            alarma.play().catch(() => {})
+        }
+    }
+
+    function reproducirAlarma(tipo) {
+        if (tipo === 'min30') {
+            reproducirTono(520, 400)
+            setTimeout(() => reproducirTono(520, 400), 500)
+            return
+        }
+
+        reproducirTono(880, 300)
+        setTimeout(() => reproducirTono(880, 300), 350)
+        setTimeout(() => reproducirTono(880, 300), 700)
+    }
+
+    function intentarAlarma(id, tipo, intervaloMs) {
+        const registro = obtenerRegistroAlertas(id)
+        const ahora = Date.now()
+
+        if (ahora - registro[tipo] >= intervaloMs) {
+            reproducirAlarma(tipo)
+            registro[tipo] = ahora
+        }
+    }
+
     function actualizarReloj() {
-
-        const ahora = new Date()
-
         document.getElementById('reloj').innerHTML =
-            ahora.toLocaleTimeString()
+            new Date().toLocaleTimeString()
     }
 
     setInterval(actualizarReloj, 1000)
-
     actualizarReloj()
 
+    const ESTADOS_ACTIVOS = [
+        'recepcion',
+        'diseno',
+        'corte',
+    ]
 
-    // CONTADORES EN TIEMPO REAL
-    const tarjetas =
-        document.querySelectorAll('.orden-card')
+    function ordenCompletada(estado) {
+        return estado === 'finalizado'
+    }
 
-    const alarma =
-        document.getElementById('alarma')
+    function ordenEnProduccion(estado) {
+        return ESTADOS_ACTIVOS.includes(estado)
+    }
+    function restaurarColorEstado(card) {
+        Object.values(COLORES_ESTADO).forEach(c => card.classList.remove(c))
+        COLORES_ALERTA.forEach(c => card.classList.remove(c))
+        card.classList.remove('animate-pulse', 'animate-bounce')
 
-    let alarmaSonando = false
+        const color = COLORES_ESTADO[card.dataset.estado]
+        if (color) {
+            card.classList.add(color)
+        }
+    }
+
+    function sincronizarTarjeta(actual, nueva) {
+        actual.dataset.estado = nueva.dataset.estado
+        actual.dataset.inicio = nueva.dataset.inicio || ''
+        actual.dataset.tiempo = nueva.dataset.tiempo
+
+        const textoEstado = actual.querySelector('.estado-texto')
+        const nuevoTexto = nueva.querySelector('.estado-texto')
+        if (textoEstado && nuevoTexto) {
+            textoEstado.textContent = nuevoTexto.textContent
+        }
+
+        const titulo = actual.querySelector('h2')
+        const nuevoTitulo = nueva.querySelector('h2')
+        if (titulo && nuevoTitulo) {
+            titulo.textContent = nuevoTitulo.textContent
+        }
+    }
 
     function actualizarContadores() {
+        document.querySelectorAll('.orden-card').forEach(card => {
+            const contador = card.querySelector('.contador')
+            const estado = card.dataset.estado
+            const inicio = card.dataset.inicio
+            const tiempoEstimado = parseInt(card.dataset.tiempo, 10)
+            const ordenId = card.dataset.id || card.dataset.inicio
 
-        tarjetas.forEach(card => {
+            restaurarColorEstado(card)
 
-            const inicio =
-                card.dataset.inicio
-
-            const tiempoEstimado =
-                parseInt(card.dataset.tiempo)
-
-            const contador =
-                card.querySelector('.contador')
-
-            if (!inicio) {
-
-                contador.innerHTML =
-                    'Pendiente'
-
+            if (ordenCompletada(estado)) {
+                contador.innerHTML = 'LISTO'
                 return
             }
 
-            const fechaInicio =
-                new Date(inicio)
+            if (!inicio || estado === 'revision') {
+                contador.innerHTML = 'Pendiente'
+                return
+            }
 
-            const ahora =
-                new Date()
+            if (!ordenEnProduccion(estado)) {
+                contador.innerHTML = card.querySelector('.estado-texto').textContent
+                return
+            }
 
-            const transcurrido =
-                Math.floor(
-                    (ahora - fechaInicio)
-                    / 1000 / 60
-                )
+            const restante = tiempoEstimado - Math.floor(
+                (Date.now() - new Date(inicio).getTime()) / 1000 / 60
+            )
 
-            const restante =
-                tiempoEstimado - transcurrido
-
-
-            // MOSTRAR TIEMPO
             if (restante > 0) {
-
-                contador.innerHTML =
-                    restante + ' min'
-
+                contador.innerHTML = restante + ' min'
             } else {
-
-                contador.innerHTML =
-                    'ATRASADO'
+                contador.innerHTML = 'ATRASADO'
             }
 
-
-            // 30 MIN
-            if (
-                restante <= 30
-                && restante > 10
-            ) {
-
-                card.classList.add(
-                    'animate-pulse'
-                )
+            if (restante <= 30 && restante > 10) {
+                card.classList.add('animate-pulse')
+                intentarAlarma(ordenId, 'min30', 60000)
             }
 
-            // 10 MIN
-            if (
-                restante <= 10
-                && restante > 0
-            ) {
-
-                card.classList.remove(
-                    'bg-blue-600',
-                    'bg-yellow-500',
-                    'bg-orange-500'
-                )
-
-                card.classList.add(
-                    'bg-red-600',
-                    'animate-bounce'
-                )
-
-                if (!alarmaSonando) {
-
-                    alarma.play()
-
-                    alarmaSonando = true
-                }
+            if (restante <= 10 && restante > 0) {
+                Object.values(COLORES_ESTADO).forEach(c => card.classList.remove(c))
+                card.classList.add('bg-red-600', 'animate-bounce')
+                intentarAlarma(ordenId, 'min10', 30000)
             }
 
-            // VENCIDO
             if (restante <= 0) {
+                Object.values(COLORES_ESTADO).forEach(c => card.classList.remove(c))
+                card.classList.add('bg-red-900', 'animate-pulse')
+                intentarAlarma(ordenId, 'vencido', 30000)
+            }
+        })
+    }
 
-                card.classList.remove(
-                    'bg-blue-600',
-                    'bg-yellow-500',
-                    'bg-orange-500'
-                )
+    async function actualizarOrdenes() {
+        try {
+            const response = await fetch(
+                '{% url "actualizar_cliente" %}?_=' + Date.now(),
+                { cache: 'no-store' }
+            )
+            if (!response.ok) return
 
-                card.classList.add(
-                    'bg-red-900',
-                    'animate-pulse'
-                )
+            const html = await response.text()
+            const temp = document.createElement('div')
+            temp.innerHTML = html.trim()
 
-                if (!alarmaSonando) {
+            const nuevasTarjetas = temp.querySelectorAll('.orden-card')
+            const container = document.getElementById('ordenes-container')
+            let wrapper = container.querySelector('.ordenes-grid')
 
-                    alarma.play()
-
-                    alarmaSonando = true
-                }
+            if (!wrapper) {
+                container.innerHTML = html
+                actualizarContadores()
+                return
             }
 
-        })
+            const actuales = new Map()
+            wrapper.querySelectorAll('.orden-card').forEach(card => {
+                actuales.set(card.dataset.id, card)
+            })
 
+            const idsActivos = new Set()
+
+            nuevasTarjetas.forEach(nueva => {
+                idsActivos.add(nueva.dataset.id)
+                const actual = actuales.get(nueva.dataset.id)
+
+                if (!actual) {
+                    wrapper.appendChild(nueva)
+                    return
+                }
+
+                sincronizarTarjeta(actual, nueva)
+            })
+
+            actuales.forEach((card, id) => {
+                if (!idsActivos.has(id)) {
+                    card.remove()
+                    alertasPorOrden.delete(id)
+                }
+            })
+
+            actualizarContadores()
+        } catch (error) {
+            console.error('Error al actualizar órdenes:', error)
+        }
     }
 
     actualizarContadores()
-
-    setInterval(
-        actualizarContadores,
-        1000
-    )
-
-    // REFRESCO CADA 5 MINUTOS
-    setInterval(() => {
-
-        location.reload()
-
-    }, 300000)
+    setInterval(actualizarContadores, 1000)
+    setInterval(actualizarOrdenes, 3000)
+    actualizarOrdenes()
 
 </script>
 

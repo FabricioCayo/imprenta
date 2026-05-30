@@ -11,7 +11,7 @@ from .models import HistorialEstado
 
 from .decorators import solo_admin, solo_trabajador
 
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.utils.timezone import now
 
 from django.contrib.auth.models import User, Group
@@ -24,7 +24,7 @@ from .decorators import (
 )
 
 
-from django.db.models import Count
+from django.views.decorators.cache import never_cache
 
 @login_required
 def redireccion_dashboard(request):
@@ -155,6 +155,8 @@ def dashboard_cliente(request):
 
     ordenes = OrdenTrabajo.objects.exclude(
         estado='entregado'
+    ).filter(
+        archivado=False
     )
     context = {
         'ordenes': ordenes
@@ -508,14 +510,13 @@ def kanban(request):
     )
 
 
-@login_required
+@never_cache
 def actualizar_cliente(request):
 
     ordenes = OrdenTrabajo.objects.exclude(
-        estado__in=[
-            'finalizado',
-            'entregado'
-        ]
+        estado='entregado'
+    ).filter(
+        archivado=False
     )
     return render(
 

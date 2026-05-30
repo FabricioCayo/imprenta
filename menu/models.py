@@ -86,6 +86,8 @@ class OrdenTrabajo(models.Model):
 
     alarma_activada = models.BooleanField(default=False)
 
+    archivado = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['-fecha_creacion']
 
