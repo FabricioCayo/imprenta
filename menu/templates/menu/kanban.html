@@ -217,9 +217,16 @@
                         {{ orden.cliente }}
                     </p>
 
-                    <p class="mt-2 font-semibold">
-                        Completado
+                    <p class="mt-2 font-semibold text-green-700">
+                        Listo para entregar
                     </p>
+
+                    <a
+                        href="{% url 'cambiar_estado' orden.id %}"
+                        class="mt-4 block text-center bg-green-700 hover:bg-green-800 text-white py-2 rounded-lg font-semibold"
+                    >
+                        Marcar entregado
+                    </a>
 
                 </div>
 

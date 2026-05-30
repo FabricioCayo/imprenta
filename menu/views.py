@@ -250,6 +250,10 @@ def editar_orden(request, id):
 
                     orden.fecha_finalizacion = timezone.now()
 
+                if orden.estado == 'entregado':
+
+                    orden.archivado = True
+
                 orden.save()
 
             messages.success(
@@ -338,6 +342,10 @@ def cambiar_estado(request, id):
 
             orden.fecha_finalizacion = timezone.now()
 
+        if nuevo_estado == 'entregado':
+
+            orden.archivado = True
+
         orden.save()
 
         # HISTORIAL
@@ -349,6 +357,13 @@ def cambiar_estado(request, id):
 
             trabajador=request.user
         )
+
+        if nuevo_estado == 'entregado':
+
+            messages.success(
+                request,
+                'Orden marcada como entregada'
+            )
 
     return redirect('kanban')
 
@@ -473,23 +488,29 @@ def eliminar_usuario(request, id):
 @admin_o_trabajador
 def kanban(request):
 
-    revision = OrdenTrabajo.objects.filter(
+    ordenes_activas = OrdenTrabajo.objects.filter(
+        archivado=False
+    ).exclude(
+        estado='entregado'
+    )
+
+    revision = ordenes_activas.filter(
         estado='revision'
     )
 
-    recepcion = OrdenTrabajo.objects.filter(
+    recepcion = ordenes_activas.filter(
         estado='recepcion'
     )
 
-    diseno = OrdenTrabajo.objects.filter(
+    diseno = ordenes_activas.filter(
         estado='diseno'
     )
 
-    corte = OrdenTrabajo.objects.filter(
+    corte = ordenes_activas.filter(
         estado='corte'
     )
 
-    finalizado = OrdenTrabajo.objects.filter(
+    finalizado = ordenes_activas.filter(
         estado='finalizado'
     )
     

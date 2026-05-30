@@ -1,0 +1,14 @@
+# Proyecto Imprenta - dependencias Python
+# Instalar: pip install -r requirements.txt
+
+Django==6.0.5
+django-widget-tweaks==1.5.1
+gunicorn==26.0.0
+whitenoise==6.12.0
+dj-database-url==3.1.2
+
+# Dependencias de Django (instaladas automaticamente)
+asgiref==3.11.1
+packaging==26.2
+sqlparse==0.5.5
+tzdata==2026.2
