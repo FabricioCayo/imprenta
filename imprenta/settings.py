@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-dmb2g#6dp*ufmp$gf+e&xrn48eut++m^xl+h$mx06#ik$$!a)z
 DEBUG = True
 
 import os
-ALLOWED_HOSTS = ['fabricio65.pythonanywhere.com', 'localhost', '127.0.0.1']
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.render.com']
 
 # Application definition
 
