@@ -6,7 +6,7 @@
 <!-- PANEL DEL TRABAJADOR -->
 <!-- ===================================== -->
 
-<h1 class="text-4xl font-bold mb-6">
+<h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
     Panel Trabajador
 </h1>
 
@@ -18,9 +18,9 @@
 
     {% for orden in ordenes %}
 
-        <div class="bg-white p-6 rounded-xl shadow">
+        <div class="bg-white p-4 sm:p-6 rounded-xl shadow">
 
-            <h2 class="text-2xl font-bold">
+            <h2 class="text-xl sm:text-2xl font-bold">
                 {{ orden.empresa }}
             </h2>
 
@@ -45,7 +45,7 @@
 
             <a
                 href="{% url 'cambiar_estado' orden.id %}"
-                class="bg-blue-600 text-white px-4 py-2 rounded inline-block mt-4"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block mt-4 w-full sm:w-auto text-center text-sm sm:text-base"
             >
                 Avanzar Estado
             </a>

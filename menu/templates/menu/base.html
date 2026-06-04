@@ -5,15 +5,12 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Imprenta</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Flowbite -->
     <link
         href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.css"
         rel="stylesheet"
@@ -25,51 +22,82 @@
 
     {% if request.path != '/cliente/' %}
 
-    <div class="flex min-h-screen">
+    <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-black/50 hidden md:hidden" aria-hidden="true"></div>
 
-        <!-- Sidebar -->
-        <aside class="w-72 bg-gray-900 text-white p-6">
+    <header class="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-gray-900 text-white px-4 py-3 shadow-lg">
 
-            <h1 class="text-3xl font-bold mb-10">
-                Imprenta
-            </h1>
+        <button
+            id="menu-toggle"
+            type="button"
+            class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700"
+            aria-label="Abrir menú"
+        >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
 
-            <nav class="space-y-4">
+        <span class="text-lg font-bold">Imprenta</span>
 
-                <!-- ADMINISTRADOR -->
+        <span class="w-10"></span>
+
+    </header>
+
+    <div class="flex min-h-screen pt-14 md:pt-0">
+
+        <aside
+            id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-gray-900 text-white p-6 transform -translate-x-full transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:max-w-none md:shrink-0 overflow-y-auto"
+        >
+
+            <div class="flex items-center justify-between mb-8 md:mb-10">
+
+                <h1 class="text-2xl md:text-3xl font-bold">
+                    Imprenta
+                </h1>
+
+                <button
+                    id="menu-close"
+                    type="button"
+                    class="md:hidden p-2 rounded-lg bg-gray-800 hover:bg-gray-700"
+                    aria-label="Cerrar menú"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+            </div>
+
+            <nav class="space-y-3">
+
                 {% if request.user.groups.all %}
 
                     {% for grupo in request.user.groups.all %}
 
                         {% if grupo.name == 'Administrador' %}
 
-                            <a href="{% url 'dashboard_admin' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'dashboard_admin' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Dashboard
                             </a>
 
-                            <a href="{% url 'crear_orden' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'crear_orden' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Nueva Orden
                             </a>
 
-                            <a href="{% url 'lista_usuarios' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'lista_usuarios' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Usuarios
                             </a>
 
-                            <a href="{% url 'dashboard_trabajador' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'dashboard_trabajador' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Trabajador
                             </a>
 
-                            <a href="{% url 'dashboard_cliente' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'dashboard_cliente' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Pantalla Cliente
                             </a>
 
-                            <a href="{% url 'kanban' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'kanban' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Kanban Producción
                             </a>
 
@@ -79,21 +107,17 @@
 
                 {% endif %}
 
-
-                <!-- TRABAJADOR -->
                 {% if request.user.groups.all %}
 
                     {% for grupo in request.user.groups.all %}
 
                         {% if grupo.name == 'Trabajador' %}
 
-                            <a href="{% url 'dashboard_trabajador' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'dashboard_trabajador' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Trabajador
                             </a>
 
-                            <a href="{% url 'kanban' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'kanban' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Kanban Producción
                             </a>
 
@@ -103,16 +127,13 @@
 
                 {% endif %}
 
-
-                <!-- CLIENTE -->
                 {% if request.user.groups.all %}
 
                     {% for grupo in request.user.groups.all %}
 
                         {% if grupo.name == 'Cliente' %}
 
-                            <a href="{% url 'dashboard_cliente' %}"
-                            class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg">
+                            <a href="{% url 'dashboard_cliente' %}" class="nav-link block bg-gray-800 hover:bg-gray-700 p-3 md:p-4 rounded-lg text-sm md:text-base">
                                 Pantalla Cliente
                             </a>
 
@@ -124,24 +145,21 @@
 
             </nav>
 
-            <div class="mt-10">
+            <div class="mt-8 md:mt-10">
 
                 {% if user.is_authenticated %}
 
-                <p class="mb-4 text-gray-300">
+                <p class="mb-4 text-gray-300 text-sm md:text-base">
                     {{ user.username }}
                 </p>
 
-                <form
-                    method="POST"
-                    action="{% url 'logout' %}"
-                >
+                <form method="POST" action="{% url 'logout' %}">
 
                     {% csrf_token %}
 
                     <button
                         type="submit"
-                        class="w-full bg-red-600 hover:bg-red-700 p-3 rounded-lg"
+                        class="w-full bg-red-600 hover:bg-red-700 p-3 rounded-lg text-sm md:text-base"
                     >
                         Cerrar Sesión
                     </button>
@@ -154,8 +172,7 @@
 
         </aside>
 
-        <!-- Contenido -->
-        <main class="flex-1 p-10">
+        <main class="flex-1 w-full min-w-0 p-4 sm:p-6 md:p-10">
 
             {% block content %}
             {% endblock %}
@@ -163,6 +180,43 @@
         </main>
 
     </div>
+
+    <script>
+        (function () {
+            const sidebar = document.getElementById('sidebar')
+            const overlay = document.getElementById('sidebar-overlay')
+            const toggle = document.getElementById('menu-toggle')
+            const closeBtn = document.getElementById('menu-close')
+
+            if (!sidebar || !overlay) return
+
+            function abrirMenu() {
+                sidebar.classList.remove('-translate-x-full')
+                overlay.classList.remove('hidden')
+                document.body.classList.add('overflow-hidden')
+            }
+
+            function cerrarMenu() {
+                sidebar.classList.add('-translate-x-full')
+                overlay.classList.add('hidden')
+                document.body.classList.remove('overflow-hidden')
+            }
+
+            toggle?.addEventListener('click', abrirMenu)
+            closeBtn?.addEventListener('click', cerrarMenu)
+            overlay.addEventListener('click', cerrarMenu)
+
+            document.querySelectorAll('.nav-link').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (window.innerWidth < 768) cerrarMenu()
+                })
+            })
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth >= 768) cerrarMenu()
+            })
+        })()
+    </script>
 
     {% else %}
 
